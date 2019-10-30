@@ -11,7 +11,7 @@ int LoadTexture(textureT* texture, const char* fileName)
 
 	if (tmpSurface == NULL)
 	{
-		fprintf(stderr, "Texture Error: Could not load image: %s! SDL_image Error: %d\n", fileName, IMG_GetError());
+		fprintf(stderr, "Texture Error: Could not load image: %s! SDL_image Error: %s\n", fileName, IMG_GetError());
 		return 0;
 	}
 	else
@@ -20,7 +20,7 @@ int LoadTexture(textureT* texture, const char* fileName)
 
 		if (texture->texture == NULL)
 		{
-			fprintf(stderr, "Texture Error: Could not load image: %s! SDL_image Error: %d\n", fileName, IMG_GetError());
+			fprintf(stderr, "Texture Error: Could not load image: %s! SDL_image Error: %s\n", fileName, IMG_GetError());
 			SDL_FreeSurface(tmpSurface);
 			return 0;
 		}
@@ -45,7 +45,7 @@ void TextureInit(textureT* texture, int x, int y, double angle, SDL_Point* cente
 	texture->flipType = flipType;
 }
 
-void textureRenderXYClip(textureT* texture, int x, int y, SDL_Rect* clipRect)
+void TextureRenderXYClip(textureT* texture, int x, int y, SDL_Rect* clipRect)
 {
 	if (texture == NULL)
 	{
@@ -56,4 +56,12 @@ void textureRenderXYClip(textureT* texture, int x, int y, SDL_Rect* clipRect)
 	texture->y = y;
 	texture->clipRect = clipRect;
 	SDL_Rect quad = { texture->x,texture->y,texture->width,texture->height };
+
+	if (texture->clipRect != NULL)
+	{
+		quad.w = texture->clipRect->w;
+		quad.h = texture->clipRect->h;
+	}
+
+	SDL_RenderCopyEx(GetRenderer(), texture->texture, texture->clipRect, &quad, texture->angle, texture->center, texture->flipType);
 }
