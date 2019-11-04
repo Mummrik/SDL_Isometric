@@ -12,27 +12,10 @@
 // timestamp 1:15:26
 
 #define NUM_ISOMETRIC_TILES 5
-#define MAP_HEIGHT 16
-#define MAP_WIDTH 16
+#define MAP_HEIGHT 100
+#define MAP_WIDTH 100
 
-int worldTest[MAP_HEIGHT][MAP_WIDTH] = {
-	{1,1,2,2,2,2,2,2,1,1,2,2,2,2,2,1},
-	{1,1,1,1,2,1,1,2,1,1,2,2,2,2,2,1},
-	{2,1,1,1,2,2,2,2,1,1,2,2,2,2,2,1},
-	{2,1,1,2,2,1,1,2,1,1,2,2,2,2,2,1},
-	{2,1,1,4,4,4,1,2,1,1,2,2,2,2,4,1},
-	{2,1,1,4,4,4,1,2,1,1,2,2,2,2,2,1},
-	{2,1,1,4,4,4,1,2,1,1,2,2,4,2,2,1},
-	{2,2,2,4,4,4,2,1,2,3,3,3,4,2,2,1},
-	{1,1,2,2,2,2,2,3,4,3,3,3,4,2,2,2},
-	{1,1,1,1,2,1,1,2,1,3,3,3,2,2,2,3},
-	{2,1,1,1,2,2,2,2,1,1,2,2,2,2,2,1},
-	{2,1,1,2,2,1,1,2,1,1,3,2,2,2,4,4},
-	{2,1,1,4,2,1,1,2,1,1,3,2,2,2,2,4},
-	{2,1,1,1,2,1,1,2,1,1,3,3,3,3,3,4},
-	{2,1,1,1,1,1,1,2,1,1,2,2,2,2,4,4},
-	{2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,1}
-};
+int world[MAP_HEIGHT][MAP_WIDTH];
 
 typedef struct gameT
 {
@@ -50,6 +33,22 @@ typedef struct gameT
 gameT game;
 textureT tilesTex;
 SDL_Rect tilesRects[NUM_ISOMETRIC_TILES];
+
+void SetupWorldMap()
+{
+	for (int x = 0; x < MAP_WIDTH; x++)
+	{
+		for (int y = 0; y < MAP_HEIGHT; y++)
+		{
+			int rndTile = rand() % NUM_ISOMETRIC_TILES;
+			if (rndTile <= 0)
+			{
+				rndTile = 1;
+			}
+			world[y][x] = rndTile;
+		}
+	}
+}
 
 void SetupRect(SDL_Rect* rect, int x, int y, int w, int h)
 {
@@ -80,7 +79,8 @@ void Init()
 	InitTileClip();
 	InitIsoEngine(&game.isoEngine, tileSize);
 	IsoEngineSetMapSize(&game.isoEngine, MAP_WIDTH, MAP_HEIGHT);
-	
+	SetupWorldMap();
+
 	game.isoEngine.scrollX = (TILESIZE * 9) + 16;
 	game.isoEngine.scrollY = -game.isoEngine.scrollX;
 	game.mapScroll2DPos.x = -game.isoEngine.scrollX;
@@ -106,7 +106,7 @@ void DrawIsoMouse()
 	// For every other X position on the map
 	if ((game.mousePoint.x / TILESIZE) % 2)
 	{
-		// move the mouse down by half a tile so can pick isometric tiles on that row aswell
+		// move the mouse down by half a tile so can pick isometric tiles on that row as well
 		game.mousePoint.y += TILESIZE * 0.5;
 	}
 	TextureRenderXYClip(&tilesTex, game.mousePoint.x - correctX, game.mousePoint.y + correctY, &tilesRects[0]);
@@ -117,14 +117,14 @@ void DrawIsoMap(isoEngineT* isoEngine)
 	int tile;
 	point2DT point;
 
-	for (int i = 0; i < isoEngine->mapHeight; i++)
+	for (int y = 0; y < isoEngine->mapHeight; y++)
 	{
-		for (int j = 0; j < isoEngine->mapWidth; j++)
+		for (int x = 0; x < isoEngine->mapWidth; x++)
 		{
-			point.x = (j * TILESIZE) + isoEngine->scrollX;
-			point.y = (i * TILESIZE) + isoEngine->scrollY;
+			point.x = (x * TILESIZE) + isoEngine->scrollX;
+			point.y = (y * TILESIZE) + isoEngine->scrollY;
 
-			tile = worldTest[i][j];
+			tile = world[y][x];
 
 			Convert2DToIso(&point);
 			TextureRenderXYClip(&tilesTex, point.x, point.y, &tilesRects[tile]);
@@ -149,21 +149,23 @@ void GetMouseTileClick(isoEngineT* isoEngine)
 
 	tileShift.x = correctX;
 	tileShift.y = correctY;
-	ConvertIsoTo2D(&tileShift);
+	//ConvertIsoTo2D(&tileShift);
+	Convert2DToIso(&tileShift);
 
 	point.x -= ((float)isoEngine->scrollX + (float)tileShift.x) / (float)TILESIZE;
 	point.y -= ((float)isoEngine->scrollY - (float)tileShift.y) / (float)TILESIZE;
 
 	if (point.x >= 0 && point.y >= 0 && point.x < MAP_WIDTH && point.y > MAP_HEIGHT)
 	{
-		//game.lastTileClicked = worldTest[point.y][point.x];
+		game.lastTileClicked = world[point.y][point.x];
 	}
-	game.lastTileClicked = worldTest[point.y][point.x];
+
+	game.lastTileClicked = world[point.y][point.x];
 }
 
 void Draw()
 {
-	SDL_ShowCursor(SDL_DISABLE);
+	//SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRenderDrawColor(GetRenderer(), 0x3b, 0x3b, 0x3b, 0x00);
 	SDL_RenderClear(GetRenderer());
 
@@ -208,6 +210,13 @@ void UpdateInput()
 			if (game.event.button.button == SDL_BUTTON_LEFT)
 			{
 				GetMouseTileClick(&game.isoEngine);
+			}
+			if (game.event.button.button == SDL_BUTTON_RIGHT)
+			{
+				if (game.lastTileClicked > -1)
+				{
+					game.lastTileClicked = -1;
+				}
 			}
 			break;
 		default:

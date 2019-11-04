@@ -16,7 +16,7 @@ void InitSDL(const char* windowName)
 
 	if (SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,"0"))
 	{
-		fprintf(stdout, "Warning: Linear texture filtering was not enabled!");
+		fprintf(stdout, "Warning: Linear texture filtering was not enabled!\n");
 	}
 
 	InitRenderer(windowName);
