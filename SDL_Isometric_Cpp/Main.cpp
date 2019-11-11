@@ -7,16 +7,16 @@ using namespace IsoEngine;
 int main(int argc, char* argv[])
 {
 	InitClose::InitSDL("Game");
-	Game game;
-	game.Init();
+	Game::instance().Init();
 
-	while (!game.quit)
+	while (!Game::instance().quit)
 	{
-		game.Update();
-		game.UpdateInput(game);
-		game.Draw();
+		Game::instance().Update();
+		Game::instance().UpdateInput();
+		Game::instance().Draw();
 	}
 
+	Game::instance().Shutdown();
 	InitClose::ShutdownSDL();
 	return 0;
 }

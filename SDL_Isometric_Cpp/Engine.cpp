@@ -4,39 +4,27 @@
 
 namespace IsoEngine
 {
-	void Engine::Init(Engine* engine, int tileSize)
-	{
-		if (!engine)
-		{
-			fprintf(stderr, "Error in Engine::Init(...): engine parameter is NULL!\n");
-			return;
-		}
+	unsigned int Engine::TILESIZE = 0;
+	int Engine::scrollX = 0;
+	int Engine::scrollY = 0;
+	int Engine::mapWidth = 0;
+	int Engine::mapHeight = 0;
 
+	void Engine::Init(int tileSize)
+	{
 		if (tileSize <= 0)
 		{
-			//engine->TILESIZE = 32;
 			TILESIZE = 32;
 		}
 		else
 		{
-			//engine->TILESIZE = tileSize;
 			TILESIZE = tileSize;
 		}
-
-		engine->mapHeight = 0;
-		engine->mapWidth = 0;
-		engine->scrollX = 0;
-		engine->scrollY = 0;
 	}
-	void Engine::SetMapSize(Engine* engine, int width, int height)
+	void Engine::SetMapSize(int width, int height)
 	{
-		if (!engine)
-		{
-			fprintf(stderr, "Error in Engine::SetMapSize(...): engine parameter is NULL!\n");
-			return;
-		}
-		engine->mapHeight = height;
-		engine->mapWidth = width;
+		mapHeight = height;
+		mapWidth = width;
 	}
 	void Engine::Convert2DToIso(Vector2D* vector2D)
 	{

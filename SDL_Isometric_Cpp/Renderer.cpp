@@ -32,11 +32,16 @@ namespace IsoEngine
 			SDL_DestroyRenderer(renderer);
 			renderer = nullptr;
 		}
-		
+
 		if (window)
 		{
 			SDL_DestroyWindow(window);
 			window = nullptr;
+		}
+
+		if (&instance())
+		{
+			delete& instance();
 		}
 	}
 }

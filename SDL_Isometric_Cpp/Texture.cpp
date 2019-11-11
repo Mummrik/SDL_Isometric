@@ -16,10 +16,7 @@ namespace IsoEngine
 		}
 		else
 		{
-			// Note: is this the right way to get the renderer???
-			Renderer renderer = IsoEngine::Renderer();
-			texture->texture = SDL_CreateTextureFromSurface(renderer.GetRenderer(), tmpSurface);
-			//texture->texture = SDL_CreateTextureFromSurface(Renderer::GetRenderer(), tmpSurface);
+			texture->texture = SDL_CreateTextureFromSurface(Renderer::instance().GetRenderer(), tmpSurface);
 
 			if (!texture->texture)
 			{
@@ -66,8 +63,6 @@ namespace IsoEngine
 			quad.h = texture->clipRect->h;
 		}
 
-		Renderer renderer = IsoEngine::Renderer();
-		SDL_RenderCopyEx(renderer.GetRenderer(), texture->texture, texture->clipRect, &quad, texture->angle, texture->center, texture->flipType);
-		//SDL_RenderCopyEx(Renderer::GetRenderer(), texture->texture, texture->clipRect, &quad, texture->angle, texture->center, texture->flipType);
+		SDL_RenderCopyEx(Renderer::instance().GetRenderer(), texture->texture, texture->clipRect, &quad, texture->angle, texture->center, texture->flipType);
 	}
 }

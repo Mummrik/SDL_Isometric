@@ -22,9 +22,7 @@ namespace IsoEngine
 			fprintf(stdout, "Warning: Linear texture filtering was not enabled!\n");
 		}
 
-		Renderer renderer = IsoEngine::Renderer();
-		renderer.Init(title);
-		//Renderer::Init(title);
+		Renderer::instance().Init(title);
 
 		if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
 		{
@@ -35,9 +33,7 @@ namespace IsoEngine
 
 	void InitClose::ShutdownSDL()
 	{
-		Renderer renderer = IsoEngine::Renderer();
-		renderer.Shutdown();
-		//Renderer::Shutdown();
+		Renderer::instance().Shutdown();
 		IMG_Quit();
 		SDL_Quit();
 	}

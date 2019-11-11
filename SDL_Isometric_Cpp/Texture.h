@@ -17,9 +17,9 @@ namespace IsoEngine
 		SDL_RendererFlip flipType;
 		SDL_Texture* texture;
 
-		int Load(Texture* texture, const char* fileName);
-		void Init(Texture* texture, int x, int y, double angle, SDL_Point* center, SDL_Rect* clipRect, SDL_RendererFlip flipType);
-		void RendererXYClip(Texture* texture, int x, int y, SDL_Rect* clipRect);
+		static int Load(Texture* texture, const char* fileName);
+		static void Init(Texture* texture, int x, int y, double angle, SDL_Point* center, SDL_Rect* clipRect, SDL_RendererFlip flipType);
+		static void RendererXYClip(Texture* texture, int x, int y, SDL_Rect* clipRect);
 
 	};
 }

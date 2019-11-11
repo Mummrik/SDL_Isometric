@@ -10,14 +10,23 @@ namespace IsoEngine
 	class Renderer
 	{
 	public:
-		SDL_Window* GetWindow() { return window; }
-		SDL_Renderer* GetRenderer() { return renderer; }
+		static Renderer& instance()
+		{
+			static Renderer* instance = new Renderer();
+			return *instance;
+		}
+
+
+		SDL_Window* GetWindow() const { return window; }
+		SDL_Renderer* GetRenderer() const { return renderer; }
 		bool Init(const char* title);
 		void Shutdown();
 
 	protected:
+		Renderer() {}
 		SDL_Window* window = nullptr;
 		SDL_Renderer* renderer = nullptr;
+		static Renderer* _instance;
 	};
 }
 
